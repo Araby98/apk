@@ -27,7 +27,7 @@ class StudentViewModel(
     val modules: StateFlow<List<Module>> = moduleDao.getAllModules()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubsubscribed(5000),
+            started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
@@ -47,7 +47,7 @@ class StudentViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubsubscribed(5000),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = DashboardUiState()
     )
 
