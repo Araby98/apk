@@ -28,4 +28,7 @@ interface StudentDao {
         ORDER BY s.lastName ASC
     """)
     fun getStudentsWithPaymentStatus(targetMonth: String): Flow<List<StudentWithPaymentStatus>>
+
+    @Query("SELECT COUNT(*) FROM students")
+    suspend fun getStudentsCount(): Int
 }

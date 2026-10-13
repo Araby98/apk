@@ -19,4 +19,7 @@ interface ModuleDao {
 
     @Query("SELECT * FROM modules ORDER BY name ASC")
     fun getAllModules(): Flow<List<Module>>
+
+    @Query("SELECT COUNT(*) FROM modules")
+    suspend fun getModulesCount(): Int
 }

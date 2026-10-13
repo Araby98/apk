@@ -11,7 +11,10 @@ data class Student(
     val lastName: String,
     val phone: String,
     val grade: String,       // e.g., "10th Grade", "Bachelor 1"
-    val module: String,      // e.g., "Mathematics", "Physics"
+    val module: String,      // Comma-separated subjects, e.g. "Mathematics, Physics"
     val monthlyPrice: Double,
     val isActive: Boolean = true
-)
+) {
+    val modulesList: List<String>
+        get() = if (module.isBlank()) emptyList() else module.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+}
