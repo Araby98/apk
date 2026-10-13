@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#6750a4">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <title>Student Tracker - Android APK Live Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=Outfit:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2">
+  <!-- jsPDF & AutoTable for direct client-side PDF document generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+  <!-- Background Glow & Workspace Canvas -->
+  <div class="studio-container">
+    <!-- Header Toolbar -->
+    <header class="studio-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Student Tracker</h1>
+          <span class="badge">Android APK Interactive Preview</span>
+        </div>
+      </div>
+
+      <div class="toolbar-actions">
+          <button id="studio-lang-toggle-btn" class="tool-btn highlight" title="Toggle Language (العربية / English)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span class="btn-label" id="studio-lang-label">العربية (AR)</span>
+          </button>
+
+          <button id="export-choice-btn" class="tool-btn highlight" title="Export Student Records (Excel / PDF)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span class="btn-label" id="studio-export-label">Export (Excel/PDF)</span>
+          </button>
+
+          <button id="studio-manage-modules-btn" class="tool-btn" title="Manage Subjects & Modules">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span class="btn-label">Subjects</span>
+          </button>
+
+          <button id="theme-toggle-btn" class="tool-btn" title="Toggle Material Light / Dark Theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span class="btn-label">App Theme</span>
+          </button>
+
+          <button id="reset-data-btn" class="tool-btn" title="Reset Demo Data">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            <span class="btn-label">Reset Data</span>
+          </button>
+
+          <button id="code-drawer-btn" class="tool-btn highlight" title="Inspect Jetpack Compose & Room Source">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span class="btn-label">Source Code</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Area -->
+    <main class="studio-main">
+      <!-- Android Device Wrapper -->
+      <div class="phone-frame-wrapper">
+        <div class="device-shadow"></div>
+        <div class="android-phone">
+          <!-- Physical Device Details -->
+          <div class="phone-speaker"></div>
+          <div class="phone-camera"></div>
+
+          <!-- Phone Screen Container -->
+          <div class="phone-screen" id="app-screen">
+            <!-- Android System Status Bar -->
+            <div class="android-status-bar">
+              <div class="status-left">
+                <span id="status-clock">09:41</span>
+              </div>
+              <div class="status-right">
+                <!-- WiFi Icon -->
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4z"/>
+                </svg>
+                <!-- Cell Signal Icon -->
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2 22h20V2L2 22z"/>
+                </svg>
+                <!-- Battery Icon -->
+                <svg width="16" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17 4h-3V2h-4v2H7v18h10V4z"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Jetpack Compose Scaffold -->
+            <div class="compose-scaffold">
+              <!-- TopAppBar (Student Tracker) -->
+              <header class="top-app-bar">
+                <div class="top-app-bar-content">
+                  <div class="app-icon-small">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                      <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                    </svg>
+                  </div>
+                  <h2 class="app-title" id="app-title-text">Student Tracker</h2>
+                </div>
+                <div class="top-app-bar-actions">
+                  <button id="app-lang-toggle-btn" class="lang-switch-badge" title="تبديل اللغة / Toggle Language">
+                    <span id="app-lang-badge-text">AR</span>
+                  </button>
+                  <button id="app-export-choice-btn" class="icon-nav-btn" title="Export Student Records (Excel / PDF)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                  </button>
+                  <button id="app-manage-modules-btn" class="icon-nav-btn" title="Manage Subjects & Modules">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                  </button>
+                  <div class="month-selector">
+                    <button id="prev-month-btn" class="month-nav-btn" title="Previous Month">‹</button>
+                    <span id="current-month-display" class="month-badge">2026-10</span>
+                    <button id="next-month-btn" class="month-nav-btn" title="Next Month">›</button>
+                  </div>
+                </div>
+              </header>
+
+              <!-- App Scrollable Body -->
+              <div class="app-body">
+                <!-- Stats Banner Card -->
+                <div class="stats-card">
+                  <div class="stats-row">
+                    <div class="stat-col">
+                      <span class="stat-label" id="lbl-selected-month">Selected Month</span>
+                      <strong id="stat-month-text" class="stat-value">2026-10</strong>
+                    </div>
+                    <div class="stat-col text-right">
+                      <span class="stat-label" id="lbl-collected-target">Collected / Target</span>
+                      <strong id="stat-amount-text" class="stat-value">$0.00 / $0.00</strong>
+                    </div>
+                  </div>
+                  <!-- Progress Bar Indicator -->
+                  <div class="stat-progress-container">
+                    <div class="stat-progress-bar" id="stat-progress-bar" style="width: 0%"></div>
+                  </div>
+                  <div class="progress-details">
+                    <span id="stat-percentage">0% collected</span>
+                    <span id="stat-unpaid-count">0 unpaid</span>
+                  </div>
+                </div>
+
+                <!-- Monthly Summary Counters (Total, Paid Yes, Unpaid No) -->
+                <div class="month-summary-counters">
+                  <div class="summary-stat-box total">
+                    <span class="stat-box-title" id="lbl-summary-total">Total Students</span>
+                    <strong class="stat-box-num" id="summary-total-count">0</strong>
+                  </div>
+                  <div class="summary-stat-box paid">
+                    <span class="stat-box-title" id="lbl-summary-paid">Paid</span>
+                    <strong class="stat-box-num" id="summary-paid-count">0</strong>
+                  </div>
+                  <div class="summary-stat-box unpaid">
+                    <span class="stat-box-title" id="lbl-summary-unpaid">Unpaid</span>
+                    <strong class="stat-box-num" id="summary-unpaid-count">0</strong>
+                  </div>
+                </div>
+
+                <!-- View Switcher (Cards vs Table) -->
+                <div class="view-switch-row">
+                  <div class="segmented-control">
+                    <button id="view-cards-btn" class="segmented-btn active" title="Cards View">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                      </svg>
+                      <span id="lbl-cards-view">Cards View</span>
+                    </button>
+                    <button id="view-table-btn" class="segmented-btn" title="Monthly Table View">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                      </svg>
+                      <span id="lbl-table-view">Table View</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Quick Filter & Search Bar -->
+                <div class="filter-search-section">
+                  <div class="search-box">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Search student or subject...">
+                  </div>
+
+                  <!-- Filter Controls Row (Status Tabs + Subject Dropdown) -->
+                  <div class="filter-controls-row">
+                    <div class="status-filter-tabs">
+                      <button class="filter-tab active" data-filter="all"><span id="lbl-tab-all">All</span> (<span id="count-all">0</span>)</button>
+                      <button class="filter-tab" data-filter="paid"><span id="lbl-tab-paid">Paid</span> (<span id="count-paid">0</span>)</button>
+                      <button class="filter-tab" data-filter="unpaid"><span id="lbl-tab-unpaid">Unpaid</span> (<span id="count-unpaid">0</span>)</button>
+                    </div>
+                    <div class="subject-filter-container">
+                      <!-- Custom premium dropdown for subject filter -->
+                      <div class="custom-dropdown" id="subject-filter-custom-dropdown">
+                        <div class="dropdown-trigger sf-trigger" id="sf-dropdown-trigger" tabindex="0">
+                          <div class="dropdown-trigger-content">
+                            <span class="dropdown-item-dot"></span>
+                            <span class="dropdown-selected-text" id="sf-selected-text">All Subjects</span>
+                          </div>
+                          <svg class="dropdown-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </div>
+                        <div class="dropdown-menu-list hidden sf-menu-list" id="sf-dropdown-menu-list">
+                          <!-- Populated dynamically via JS -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CARDS VIEW WRAPPER -->
+                <div id="cards-view-wrapper" class="view-pane active">
+                  <!-- Mobile Gesture Hint -->
+                  <div class="swipe-hint-banner">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    <span id="lbl-swipe-hint">Swipe left to delete &nbsp;•&nbsp; Tap ✏️ to edit</span>
+                  </div>
+
+                  <!-- Student List (LazyColumn) -->
+                  <div class="student-list" id="student-list-container">
+                    <!-- Injected via JavaScript -->
+                  </div>
+                </div>
+
+                <!-- MONTHLY TABLE VIEW WRAPPER -->
+                <div id="table-view-wrapper" class="view-pane hidden">
+                  <div class="table-month-header">
+                    <span class="tbl-month-title" id="lbl-tbl-title">Monthly Status Table:</span>
+                    <span class="tbl-month-badge" id="table-active-month">2026-10</span>
+                  </div>
+
+                  <div class="monthly-table-wrapper">
+                    <table class="students-monthly-table" id="students-monthly-table">
+                      <thead>
+                        <tr>
+                          <th id="th-col-name">Name</th>
+                          <th id="th-col-subject">Subject(s)</th>
+                          <th class="text-center" id="th-col-paid">Paid (Yes/No)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="monthly-table-body">
+                        <!-- Populated dynamically via JS -->
+                      </tbody>
+                    </table>
+                    <div id="table-empty-state" class="empty-state hidden">
+                      <p>No students match the selected filters for this month.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Floating Action Button (+) -->
+              <button id="open-add-dialog-fab" class="compose-fab" title="Add New Student">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Android Bottom Navigation Gesture Bar -->
+            <div class="android-nav-bar">
+              <div class="gesture-pill"></div>
+            </div>
+
+            <!-- Add Student Modal Dialog (Compose AlertDialog) -->
+            <div id="add-student-dialog" class="dialog-overlay hidden">
+              <div class="compose-dialog-card">
+                <div class="dialog-header">
+                  <h3 class="dialog-title">Add New Student</h3>
+                  <button id="close-dialog-icon-btn" class="icon-close">×</button>
+                </div>
+                <form id="add-student-form" class="dialog-form">
+                  <div class="form-group">
+                    <label for="input-first-name">First Name</label>
+                    <input type="text" id="input-first-name" required placeholder="e.g. Liam">
+                  </div>
+                  <div class="form-group">
+                    <label for="input-last-name">Last Name</label>
+                    <input type="text" id="input-last-name" required placeholder="e.g. Vance">
+                  </div>
+                  <div class="form-group">
+                    <label for="input-phone">Phone Number</label>
+                    <input type="tel" id="input-phone" placeholder="e.g. +1 555-0199">
+                  </div>
+                  <div class="form-group">
+                    <label for="input-grade">Grade / Level</label>
+                    <input type="text" id="input-grade" placeholder="e.g. 11th Grade">
+                  </div>
+                  <!-- Multi-Select Material 3 Dropdown for Subjects -->
+                  <div class="form-group">
+                    <div class="label-with-action">
+                      <label>Subjects / Modules (Select Multiple)</label>
+                      <button type="button" id="dialog-manage-modules-link" class="text-link-btn">+ Manage</button>
+                    </div>
+                    <div class="multi-select-container" id="add-multi-select">
+                      <div class="dropdown-trigger multi-trigger" id="add-dropdown-trigger" tabindex="0">
+                        <div class="selected-chips-row" id="add-selected-chips">
+                          <span class="placeholder-text">Select subjects...</span>
+                        </div>
+                        <svg class="dropdown-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </div>
+                      <div class="dropdown-menu-list hidden" id="add-dropdown-menu-list">
+                        <!-- Dynamically populated checkbox items -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="input-price">Monthly Price ($)</label>
+                    <input type="number" id="input-price" step="0.5" required placeholder="e.g. 50.00">
+                  </div>
+                  <div class="dialog-actions">
+                    <button type="button" id="cancel-dialog-btn" class="dialog-btn secondary">Cancel</button>
+                    <button type="submit" id="save-student-btn" class="dialog-btn primary">Save</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Edit Student Modal Dialog -->
+            <div id="edit-student-dialog" class="dialog-overlay hidden">
+              <div class="compose-dialog-card">
+                <div class="dialog-header">
+                  <div class="dialog-title-with-icon">
+                    <div class="subject-icon-badge">✏️</div>
+                    <div>
+                      <h3 class="dialog-title">Edit Student</h3>
+                      <p class="dialog-subtitle">Update student profile & subjects</p>
+                    </div>
+                  </div>
+                  <button id="close-edit-dialog-icon-btn" class="icon-close">×</button>
+                </div>
+                <form id="edit-student-form" class="dialog-form">
+                  <input type="hidden" id="edit-student-id">
+                  <div class="form-group">
+                    <label for="edit-first-name">First Name</label>
+                    <input type="text" id="edit-first-name" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="edit-last-name">Last Name</label>
+                    <input type="text" id="edit-last-name" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="edit-phone">Phone Number</label>
+                    <input type="tel" id="edit-phone">
+                  </div>
+                  <div class="form-group">
+                    <label for="edit-grade">Grade / Level</label>
+                    <input type="text" id="edit-grade">
+                  </div>
+                  <div class="form-group">
+                    <div class="label-with-action">
+                      <label>Subjects / Modules (Select Multiple)</label>
+                      <button type="button" id="edit-manage-modules-link" class="text-link-btn">+ Manage</button>
+                    </div>
+                    <div class="multi-select-container" id="edit-multi-select">
+                      <div class="dropdown-trigger multi-trigger" id="edit-dropdown-trigger" tabindex="0">
+                        <div class="selected-chips-row" id="edit-selected-chips">
+                          <span class="placeholder-text">Select subjects...</span>
+                        </div>
+                        <svg class="dropdown-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </div>
+                      <div class="dropdown-menu-list hidden" id="edit-dropdown-menu-list">
+                        <!-- Dynamically populated checkbox items -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="edit-price">Monthly Price ($)</label>
+                    <input type="number" id="edit-price" step="0.5" required>
+                  </div>
+                  <div class="dialog-actions">
+                    <button type="button" id="cancel-edit-dialog-btn" class="dialog-btn secondary">Cancel</button>
+                    <button type="submit" id="save-edit-student-btn" class="dialog-btn primary">Save Changes</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Manage Subjects / Modules Dialog (Compose ModalBottomSheet / Dialog) -->
+            <div id="manage-modules-dialog" class="dialog-overlay hidden">
+              <div class="compose-dialog-card modules-dialog-card">
+                <div class="dialog-header">
+                  <div class="dialog-title-with-icon">
+                    <div class="subject-icon-badge">📚</div>
+                    <div>
+                      <h3 class="dialog-title">Subjects & Modules</h3>
+                      <p class="dialog-subtitle">Create, rename, or delete subjects</p>
+                    </div>
+                  </div>
+                  <button id="close-modules-dialog-btn" class="icon-close">×</button>
+                </div>
+
+                <!-- Create New Subject Form -->
+                <form id="create-module-form" class="module-create-form">
+                  <div class="input-with-button">
+                    <input type="text" id="new-module-name-input" placeholder="New subject (e.g. Math, Physics, Art)" required>
+                    <button type="submit" class="dialog-btn primary small">
+                      <span>+ Add</span>
+                    </button>
+                  </div>
+                </form>
+
+                <!-- Subject Items List -->
+                <div class="modules-list-wrapper">
+                  <div class="modules-list-header">
+                    <span>Available Subjects</span>
+                    <span id="modules-count-badge" class="count-pill">0</span>
+                  </div>
+                  <div class="modules-items-list" id="modules-items-container">
+                    <!-- Populated dynamically via JS -->
+                  </div>
+                </div>
+
+                <div class="dialog-actions">
+                  <button type="button" id="done-modules-dialog-btn" class="dialog-btn primary">Done</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Choice Dialog (Excel vs PDF) -->
+            <div id="export-choice-dialog" class="dialog-overlay hidden">
+              <div class="compose-dialog-card export-dialog-card">
+                <div class="dialog-header">
+                  <div class="dialog-title-with-icon">
+                    <div class="subject-icon-badge export-header-icon">📥</div>
+                    <div>
+                      <h3 class="dialog-title" id="export-dialog-title">Export Student Records</h3>
+                      <p class="dialog-subtitle"><span id="export-dialog-subtitle">Choose format to download student list for</span> <strong id="export-active-month-text" class="highlight-month">2026-10</strong></p>
+                    </div>
+                  </div>
+                  <button id="close-export-dialog-icon-btn" class="icon-close">×</button>
+                </div>
+
+                <div class="export-options-grid">
+                  <!-- Option 1: Microsoft Excel (.xls) -->
+                  <div class="export-option-card excel" id="export-excel-card">
+                    <div class="export-card-top">
+                      <div class="export-card-icon excel-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="8" y1="13" x2="16" y2="13"></line>
+                          <line x1="8" y1="17" x2="16" y2="17"></line>
+                        </svg>
+                      </div>
+                      <div class="export-card-badge excel-badge">XLS</div>
+                    </div>
+                    <div class="export-card-content">
+                      <h4 class="export-card-title" id="export-excel-title">Microsoft Excel (.xls)</h4>
+                      <p class="export-card-desc" id="export-excel-desc">Complete tabular data with student names, grades, phone numbers, subjects, monthly fees, and payment status (Yes/No). Opens in Excel, Sheets, & Calc.</p>
+                    </div>
+                    <button type="button" id="trigger-excel-download-btn" class="dialog-btn primary export-action-btn excel-btn">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      <span id="export-excel-btn-text">Download Excel (.xls)</span>
+                    </button>
+                  </div>
+
+                  <!-- Option 2: PDF Document (.pdf) -->
+                  <div class="export-option-card pdf" id="export-pdf-card">
+                    <div class="export-card-top">
+                      <div class="export-card-icon pdf-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <path d="M9 13v4"></path>
+                          <path d="M12 13v4"></path>
+                          <path d="M15 13v4"></path>
+                        </svg>
+                      </div>
+                      <div class="export-card-badge pdf-badge">PDF</div>
+                    </div>
+                    <div class="export-card-content">
+                      <h4 class="export-card-title" id="export-pdf-title">PDF Document (.pdf)</h4>
+                      <p class="export-card-desc" id="export-pdf-desc">Official ready-to-print roster with monthly statistics, summary totals (Total, Paid, Unpaid), and clean student payment table.</p>
+                    </div>
+                    <button type="button" id="trigger-pdf-download-btn" class="dialog-btn primary export-action-btn pdf-btn">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      <span id="export-pdf-btn-text">Download PDF (.pdf)</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Print to PDF / Preview fallback -->
+                <div class="export-print-bar">
+                  <button type="button" id="trigger-print-report-btn" class="text-link-btn print-link-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                      <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    <span id="export-print-btn-text">Print Report / Browser Save-to-PDF</span>
+                  </button>
+                </div>
+
+                <div class="dialog-actions">
+                  <button type="button" id="cancel-export-dialog-btn" class="dialog-btn secondary">Close</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- In-App Toast Alert -->
+            <div id="app-toast" class="app-toast hidden">Payment updated!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side Code & Architecture Inspector -->
+      <aside class="code-inspector-panel" id="code-inspector-panel">
+        <div class="panel-header">
+          <div class="panel-tabs">
+            <button class="panel-tab active" data-tab="compose">Compose UI Code</button>
+            <button class="panel-tab" data-tab="dropdown">Dropdown Code</button>
+            <button class="panel-tab" data-tab="database">Room Data</button>
+            <button class="panel-tab" data-tab="build">Build APK</button>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <!-- Compose Tab -->
+          <div class="tab-pane active" id="pane-compose">
+            <div class="code-banner">
+              <span class="file-name">StudentTrackerDashboard.kt</span>
+              <span class="code-lang">Kotlin Compose</span>
+            </div>
+            <pre class="code-block"><code><span class="kwd">@Composable</span>
+<span class="kwd">fun</span> <span class="fn">StudentTrackerDashboard</span>(viewModel: StudentViewModel) {
+    <span class="kwd">val</span> state <span class="kwd">by</span> viewModel.uiState.collectAsState()
+    
+    <span class="fn">Scaffold</span>(
+        topBar = { <span class="fn">TopAppBar</span>(title = { <span class="fn">Text</span>(<span class="str">"Student Tracker"</span>) }) },
+        floatingActionButton = {
+            <span class="fn">FloatingActionButton</span>(onClick = { showAddDialog = <span class="kwd">true</span> }) {
+                <span class="fn">Text</span>(<span class="str">"+"</span>)
+            }
+        }
+    ) { innerPadding -&gt;
+        <span class="com">// Stats Banner &amp; Student Cards</span>
+        <span class="fn">Card</span>(colors = CardDefaults.cardColors(...)) {
+            <span class="fn">Text</span>(<span class="str">"Collected / Target"</span>)
+            <span class="fn">Text</span>(<span class="str">"${'$'}${state.totalCollected} / ${'$'}${state.totalExpected}"</span>)
+        }
+        
+        <span class="fn">LazyColumn</span> {
+            items(state.students) { item -&gt;
+                <span class="fn">StudentPaymentRow</span>(item, onTogglePayment = { ... })
+            }
+        }
+    }
+}</code></pre>
+          </div>
+
+          <!-- Dropdown Tab -->
+          <div class="tab-pane" id="pane-dropdown">
+            <div class="code-banner">
+              <span class="file-name">SubjectDropdown.kt</span>
+              <span class="code-lang">Material3 ExposedDropdownMenu</span>
+            </div>
+            <pre class="code-block"><code><span class="kwd">@OptIn</span>(ExperimentalMaterial3Api::class)
+<span class="kwd">@Composable</span>
+<span class="kwd">fun</span> <span class="fn">SubjectDropdownField</span>(
+    modules: List&lt;String&gt;,
+    selectedModule: String,
+    onModuleSelected: (String) -&gt; Unit
+) {
+    <span class="kwd">var</span> expanded <span class="kwd">by</span> remember { mutableStateOf(<span class="kwd">false</span>) }
+
+    <span class="fn">ExposedDropdownMenuBox</span>(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        <span class="fn">OutlinedTextField</span>(
+            value = selectedModule,
+            onValueChange = {},
+            readOnly = <span class="kwd">true</span>,
+            label = { <span class="fn">Text</span>(<span class="str">"Module / Subject"</span>) },
+            trailingIcon = { <span class="fn">ExposedDropdownMenuDefaults.TrailingIcon</span>(expanded = expanded) },
+            modifier = Modifier.menuAnchor().fillMaxWidth()
+        )
+        <span class="fn">ExposedDropdownMenu</span>(
+            expanded = expanded,
+            onDismissRequest = { expanded = <span class="kwd">false</span> }
+        ) {
+            modules.forEach { module -&gt;
+                <span class="fn">DropdownMenuItem</span>(
+                    text = { <span class="fn">Text</span>(module) },
+                    onClick = {
+                        onModuleSelected(module)
+                        expanded = <span class="kwd">false</span>
+                    }
+                )
+            }
+        }
+    }
+}</code></pre>
+          </div>
+
+          <!-- Database Tab -->
+          <div class="tab-pane" id="pane-database">
+            <div class="code-banner">
+              <span class="file-name">Room Entities &amp; Live SQLite State</span>
+              <span class="code-lang">SQLite LocalStorage</span>
+            </div>
+            <div class="database-stats">
+              <div class="db-stat-pill">Students: <strong id="db-student-count">0</strong></div>
+              <div class="db-stat-pill">Subjects: <strong id="db-module-count">0</strong></div>
+              <div class="db-stat-pill">Payments Logged: <strong id="db-payment-count">0</strong></div>
+            </div>
+            <div class="db-tables">
+              <h4>Active Students Table (students)</h4>
+              <div class="table-scroll">
+                <table class="db-table" id="db-students-table">
+                  <thead>
+                    <tr><th>Name</th><th>Phone</th><th>Module</th><th>Price</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Build APK Tab -->
+          <div class="tab-pane" id="pane-build">
+            <div class="code-banner">
+              <span class="file-name">How to Compile &amp; Export Real APK</span>
+              <span class="code-lang">GitHub Actions / CLI</span>
+            </div>
+            <div class="build-instructions">
+              <p>This project has a GitHub Actions CI workflow in <code>.github/workflows/android-build.yml</code> configured to build the debug APK:</p>
+              <pre class="code-block"><code><span class="com"># 1. Push code to GitHub repository</span>
+git push origin main
+
+<span class="com"># 2. GitHub Actions runs:</span>
+gradle assembleDebug
+
+<span class="com"># 3. Artifact available for download:</span>
+app/build/outputs/apk/debug/app-debug.apk</code></pre>
+              <p class="build-note">Tip: Once generated, you can install the APK directly on any Android device or preview on <a href="https://appetize.io" target="_blank" rel="noopener">Appetize.io</a> online browser emulator.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>
